@@ -8,13 +8,15 @@ class PollOptionSerializer(serializers.ModelSerializer):
         fields = [ 'id', 'option_text']
 
 
-class PollSerializer(serializers.ModelSerializer) :
+# polls/serializers.py
+class PollSerializer(serializers.ModelSerializer):
+    options = PollOptionSerializer(many=True, read_only=True)  
+    
     class Meta:
         model = Poll
-        fields = ['id', 'title', 'description', 'category', 'created_by', 'created_at', 'active', 'winner',]
+        fields = ['id', 'title', 'description', 'category', 'created_by', 
+                  'created_at', 'active', 'winner', 'options']  
         read_only_fields = ['created_by']
-
-
 
 
 class VoteSerializer(serializers.ModelSerializer):
