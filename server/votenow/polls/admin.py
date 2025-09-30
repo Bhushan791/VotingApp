@@ -30,7 +30,7 @@ class PollAdminForm(forms.ModelForm):
 @admin.register(Poll)
 class PollAdmin(admin.ModelAdmin):
     form = PollAdminForm
-    list_display = ("title", "category", "created_by", "created_at", "active", "winner")
+    list_display = ("id","title", "category", "created_by", "created_at", "active", "winner")
     list_filter = ("active", "category", "created_at")
     search_fields = ("title", "description", "category")
     inlines = [PollOptionInline]
