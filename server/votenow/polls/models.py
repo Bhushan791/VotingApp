@@ -10,7 +10,8 @@ class Poll(models.Model) :
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="created_polls")
     created_at = models.DateTimeField(auto_now_add=True)
     active = models.BooleanField(default=True)
-    winner = models.ForeignKey('PollOption', null =True, on_delete=models.SET_NULL, related_name='winner_poll')
+    winner = models.ForeignKey('PollOption', null=True, blank=True, on_delete=models.SET_NULL, related_name='winner_poll')
+
 
 
 
