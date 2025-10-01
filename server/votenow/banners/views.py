@@ -1,29 +1,22 @@
 from django.shortcuts import render
-from rest_framework import generics , permissions 
+from rest_framework import generics, permissions, parsers
 from .models import Banner
 from .serializers import BannerSerializer
 from users.permissions import IsAdmin 
 
-
-
-##creating banners
-class BannerCreateAPIView(generics.CreateAPIView) : 
+class BannerCreateAPIView(generics.CreateAPIView): 
     queryset = Banner.objects.all() 
     serializer_class = BannerSerializer
+    permission_classes = [permissions.IsAuthenticated, IsAdmin]
+    parser_classes = [parsers.MultiPartParser, parsers.FormParser]  # CRITICAL!
+    
+    def get_serializer_context(self):
+        return {'request': self.request}
 
-    permission_classes  = [permissions.IsAuthenticated, IsAdmin] 
-
-
-
-
-
-# listing banners
-
-class BannerListAPIView(generics.ListAPIView) :
+class BannerListAPIView(generics.ListAPIView):
     queryset = Banner.objects.all() 
     serializer_class = BannerSerializer 
-    permission_classes = [permissions.AllowAny ]
-
-
-
-
+    permission_classes = [permissions.AllowAny]
+    
+    def get_serializer_context(self):
+        return {'request': self.request}
