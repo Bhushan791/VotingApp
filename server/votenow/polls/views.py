@@ -38,15 +38,23 @@ class PollDetailAPIView(generics.RetrieveAPIView):
 
 #3user votes in Poll
 
-class VoteCreateAPIView(generics.CreateAPIView) :
-
-
+class VoteCreateAPIView(generics.CreateAPIView):
     queryset = Poll.objects.all() 
-    serializer_class =VoteSerializer 
+    serializer_class = VoteSerializer 
     permission_classes = [permissions.IsAuthenticated, IsUser]
 
     def perform_create(self, serializer):
-        serializer.save(voted_by=self.request.user)
+        poll_id = self.kwargs.get("pk") or self.request.data.get("poll")
+        poll = generics.get_object_or_404(Poll, id=poll_id)
+        user = self.request.user
+
+        # Check if the user already voted
+        if Vote.objects.filter(poll=poll, voted_by=user).exists():
+            # Raise a DRF exception that returns 400 instead of crashing
+            from rest_framework.exceptions import ValidationError
+            raise ValidationError("You have already voted on this poll")
+
+        serializer.save(voted_by=user, poll=poll)
 
 
 
@@ -82,3 +90,9 @@ class PollOptionBulkCreateAPIView(APIView):
             serializer.save(poll=poll)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AdminAllPollsAPIView(generics.ListAPIView):
+    queryset = Poll.objects.all()  # No filter - returns everything
+    serializer_class = PollSerializer
+    permission_classes = [permissions.IsAuthenticated, IsAdmin]

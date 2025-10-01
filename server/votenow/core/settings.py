@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "polls",
     "banners",
     "dashboard",
+    "drf_yasg"
 ]
 
 MIDDLEWARE = [
