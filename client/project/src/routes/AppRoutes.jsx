@@ -1,17 +1,31 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import Header from '../components/Header';
+import ProtectedRoute from './ProtectedRoute';
+
+// Guest Pages
 import Home from '../pages/guest/Home';
+
+// Auth Pages
 import Login from '../pages/auth/Login';
 import Register from '../pages/auth/Register';
+
+// User Pages
 import Dashboard from '../pages/user/Dashboard';
 import Polls from '../pages/user/Polls';
 import PollDetail from '../pages/user/PollDetail';
+
+// Admin Pages
 import AdminDashboard from '../pages/admin/AdminDashboard';
 import PollStats from '../pages/admin/PollStats';
 import CreatePoll from '../pages/admin/CreatePoll';
 import CreateBanner from '../pages/admin/CreateBanner';
-import ProtectedRoute from './ProtectedRoute';
+
+// Admin Management Pages (NEW)
+import UserManagement from '../pages/admin/UserManagement';
+import PollManagement from '../pages/admin/PollManagement';
+import BannerManagement from '../pages/admin/BannerManagement';
+import VoteManagement from '../pages/admin/VoteManagement';
 
 function AppRoutes() {
   const { user } = useAuth();
@@ -20,10 +34,12 @@ function AppRoutes() {
     <BrowserRouter>
       <Header />
       <Routes>
+        {/* Public Routes */}
         <Route path="/" element={user ? <Navigate to="/dashboard" /> : <Home />} />
         <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
         <Route path="/register" element={user ? <Navigate to="/dashboard" /> : <Register />} />
 
+        {/* User Routes */}
         <Route
           path="/dashboard"
           element={
@@ -49,6 +65,7 @@ function AppRoutes() {
           }
         />
 
+        {/* Admin Routes - Dashboard & Analytics */}
         <Route
           path="/admin/dashboard"
           element={
@@ -82,6 +99,41 @@ function AppRoutes() {
           }
         />
 
+        {/* Admin Management Routes - NEW CRUD Pages */}
+        <Route
+          path="/admin/users"
+          element={
+            <ProtectedRoute adminOnly>
+              <UserManagement />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/polls-management"
+          element={
+            <ProtectedRoute adminOnly>
+              <PollManagement />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/banners-management"
+          element={
+            <ProtectedRoute adminOnly>
+              <BannerManagement />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/votes-management"
+          element={
+            <ProtectedRoute adminOnly>
+              <VoteManagement />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Catch all */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>
